@@ -25,42 +25,54 @@ Developed by: Venkatesh A
 RegisterNumber: 212225040485 
 */
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-data = pd.read_csv("Salary_EX7.csv")
-data.head()
-data.info()
-data.isnull().sum()
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-data["Position"] = le.fit_transform(data["Position"])
-data.head()
-x=data[["Position","Level"]]
-y=data["Salary"]
-from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=2)
 from sklearn.tree import DecisionTreeRegressor
-dt=DecisionTreeRegressor()
-dt.fit(x_train,y_train)
-y_pred=dt.predict(x_test)
-from sklearn import metrics
-mse = metrics.mean_squared_error(y_test,y_pred)
-mse
-r2=metrics.r2_score(y_test,y_pred)
-r2
-dt.predict([[5,6]])
-plt.figure(figsize=(20, 8))
-plot_tree(dt, feature_names=x.columns, filled=True)
+
+
+data = {
+    'Position': ['Business Analyst', 'Junior Consultant', 'Senior Consultant',
+                 'Manager', 'Country Manager', 'Region Manager',
+                 'Partner', 'Senior Partner', 'C-level', 'CEO'],
+    'Level': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'Salary': [45000, 50000, 60000, 80000, 110000, 150000, 200000, 300000, 500000, 1000000]
+}
+
+df = pd.DataFrame(data)
+
+
+X = df[['Level']]     # Feature (Level)
+y = df['Salary']      # Target (Salary)
+
+
+regressor = DecisionTreeRegressor(random_state=42)
+regressor.fit(X, y)
+
+
+y_pred = regressor.predict(X)
+print("Predicted salaries:", y_pred)
+
+# Example: predict salary for a new employee at level 6.5
+level = np.array([[6.5]])
+predicted_salary = regressor.predict(level)
+print(f"Predicted Salary for level {level[0][0]}: {predicted_salary[0]}")
+X_grid = np.arange(min(X.values), max(X.values)+0.01, 0.01)  # High-resolution for smoother curve
+X_grid = X_grid.reshape(-1, 1)
+
+plt.scatter(X, y, color='red', label='Actual Salary')
+plt.plot(X_grid, regressor.predict(X_grid), color='blue', label='Decision Tree Prediction')
+plt.title('Decision Tree Regression: Level vs Salary')
+plt.xlabel('Level')
+plt.ylabel('Salary')
+plt.legend()
 plt.show()
+
 ```
 
 ## Output:
 ![Decision Tree Regressor Model for Predicting the Salary of the Employee](sam.png)
-<img width="720" height="478" alt="image" src="https://github.com/user-attachments/assets/4c0821c8-1305-400d-9725-55551da2fdd8" />
-<img width="703" height="457" alt="image" src="https://github.com/user-attachments/assets/8e5d6557-b31e-47a8-b596-0506b62bc034" />
-<img width="899" height="529" alt="image" src="https://github.com/user-attachments/assets/bd76500f-519b-4f2b-be8b-c99548e92f5a" />
-<img width="621" height="456" alt="image" src="https://github.com/user-attachments/assets/696575f3-a3e6-413e-b131-2768dd088108" />
-<img width="1064" height="643" alt="image" src="https://github.com/user-attachments/assets/4f12d110-b6ff-4d27-84a0-beec7715dcdb" />
+<img width="900" height="72" alt="image" src="https://github.com/user-attachments/assets/1434c935-9566-4eef-a8e7-73eeae2b07b9" />
+<img width="748" height="605" alt="image" src="https://github.com/user-attachments/assets/0e349f72-fbca-4f98-b1e5-8daf1403fe61" />
 
 
 
